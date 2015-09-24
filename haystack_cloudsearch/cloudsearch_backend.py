@@ -4,14 +4,13 @@ import time
 
 from django.core.exceptions import ImproperlyConfigured
 from django.db.models.loading import get_model
-from django.utils import simplejson
 
 import haystack
 from haystack.backends import BaseEngine, BaseSearchBackend, BaseSearchQuery
 from haystack.exceptions import MissingDependency
 from haystack.models import SearchResult
 from haystack.utils import get_identifier
-
+import json
 
 from haystack_cloudsearch.cloudsearch_utils import (ID, DJANGO_CT, DJANGO_ID,
                                         gen_version,
@@ -93,7 +92,7 @@ class CloudsearchSearchBackend(BaseSearchBackend):
             ideal_schema = self.build_schema(index.fields)
             if not should_build_schema:
                 # load the schema as a python data type to compare to the idealized schema
-                schema = simplejson.loads(simplejson.dumps([d['options'] for d in description]))
+                schema = json.loads(json.dumps([d['options'] for d in description]))
                 key = lambda x: x[u'index_field_name']
                 if [x for x in sorted(schema, key=key)] != [x for x in sorted(ideal_schema, key=key)]:
                     self.setup_complete = False
